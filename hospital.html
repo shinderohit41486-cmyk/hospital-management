@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarePoint Hospital Management</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f1f6f8;
+  color: #19333a;
+}
+
+header {
+  background: #087f75;
+  color: white;
+  padding: 22px;
+  text-align: center;
+}
+
+header h1 {
+  margin-bottom: 8px;
+}
+
+nav {
+  background: #064e49;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+}
+
+nav button {
+  background: transparent;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+nav button:hover {
+  background: #11998e;
+}
+
+.container {
+  width: 92%;
+  max-width: 1150px;
+  margin: 25px auto;
+}
+
+.welcome {
+  background: linear-gradient(120deg, #087f75, #21b6a8);
+  color: white;
+  padding: 30px;
+  border-radius: 14px;
+  margin-bottom: 25px;
+}
+
+.welcome h2 {
+  margin-bottom: 10px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 25px;
+}
+
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px #163a3a12;
+  border-bottom: 4px solid #12a89b;
+}
+
+.card h3 {
+  color: #64777c;
+  font-size: 14px;
+}
+
+.card p {
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 15px;
+  color: #087f75;
+}
+
+.panel {
+  background: white;
+  padding: 22px;
+  margin-bottom: 22px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px #163a3a12;
+}
+
+.panel h2 {
+  margin-bottom: 18px;
+  color: #087f75;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 13px;
+  text-align: left;
+  border-bottom: 1px solid #e4eded;
+}
+
+th {
+  background: #e7f6f3;
+  color: #075b55;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 16px;
+  border: 1px solid #ccdada;
+  border-radius: 7px;
+}
+
+label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.primary-btn {
+  background: #087f75;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  background: #064e49;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+.message {
+  margin-top: 12px;
+  color: #087f75;
+  font-weight: bold;
+}
+
+footer {
+  background: #064e49;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  margin-top: 35px;
+}
+
+@media (max-width: 800px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .container {
+    width: 94%;
+  }
+
+  .panel {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 550px;
+  }
+}
+
+@media (max-width: 450px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome {
+    padding: 22px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>✚ CarePoint Hospital</h1>
+  <p>Hospital Management System</p>
+</header>
+
+<nav>
+  <button onclick="showPage('dashboard')">Dashboard</button>
+  <button onclick="showPage('patients')">Patients</button>
+  <button onclick="showPage('appointments')">Appointments</button>
+  <button onclick="showPage('doctors')">Doctors</button>
+  <button onclick="showPage('add')">Add Patient</button>
+</nav>
+
+<div class="container">
+
+  <!-- Dashboard -->
+  <section id="dashboard" class="view active">
+    <div class="welcome">
+      <h2>Welcome, Administrator! 👋</h2>
+      <p>Manage patients, appointments and doctors from one place.</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Total Patients</h3>
+        <p id="totalPatients">3</p>
+      </div>
+
+      <div class="card">
+        <h3>Appointments</h3>
+        <p id="totalAppointments">3</p>
+      </div>
+
+      <div class="card">
+        <h3>Doctors</h3>
+        <p>4</p>
+      </div>
+
+      <div class="card">
+        <h3>Departments</h3>
+        <p>5</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Recent Patients</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Patient ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Department</th>
+          </tr>
+        </thead>
+        <tbody id="recentPatients"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Patients -->
+  <section id="patients" class="view">
+    <div class="panel">
+      <h2>Patient Records</h2>
+      <input id="search" placeholder="Search patient by name..."
+             oninput="renderPatients()">
+
+      <table>
+        <thead>
+          <tr>
+            <th>Patient ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Department</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+        <tbody id="patientTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Appointments -->
+  <section id="appointments" class="view">
+    <div class="panel">
+      <h2>Appointment Management</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="appointmentTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Doctors -->
+  <section id="doctors" class="view">
+    <div class="panel">
+      <h2>Our Doctors</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Doctor Name</th>
+            <th>Specialization</th>
+            <th>Availability</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dr. Ananya Mehta</td>
+            <td>Cardiology</td>
+            <td>Available</td>
+          </tr>
+          <tr>
+            <td>Dr. Rohan Kulkarni</td>
+            <td>General Medicine</td>
+            <td>Available</td>
+          </tr>
+          <tr>
+            <td>Dr. Sara Khan</td>
+            <td>Dermatology</td>
+            <td>Available</td>
+          </tr>
+          <tr>
+            <td>Dr. Vivek Shah</td>
+            <td>Orthopedics</td>
+            <td>Available</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Add Patient -->
+  <section id="add" class="view">
+    <div class="panel">
+      <h2>Register New Patient</h2>
+
+      <form id="patientForm">
+        <label>Patient Name</label>
+        <input id="name" required placeholder="Enter full name">
+
+        <label>Age</label>
+        <input id="age" type="number" min="0" max="120"
+               required placeholder="Enter age">
+
+        <label>Phone Number</label>
+        <input id="phone" type="tel" placeholder="Enter phone number">
+
+        <label>Department</label>
+        <select id="department" required>
+          <option value="">Select Department</option>
+          <option>Cardiology</option>
+          <option>General Medicine</option>
+          <option>Dermatology</option>
+          <option>Orthopedics</option>
+          <option>Pediatrics</option>
+        </select>
+
+        <label>Doctor</label>
+        <select id="doctor" required>
+          <option value="">Select Doctor</option>
+          <option>Dr. Ananya Mehta</option>
+          <option>Dr. Rohan Kulkarni</option>
+          <option>Dr. Sara Khan</option>
+          <option>Dr. Vivek Shah</option>
+        </select>
+
+        <label>Appointment Date</label>
+        <input id="date" type="date" required>
+
+        <label>Appointment Time</label>
+        <select id="time" required>
+          <option value="">Select Time</option>
+          <option>09:00 AM</option>
+          <option>10:30 AM</option>
+          <option>12:00 PM</option>
+          <option>02:00 PM</option>
+          <option>04:00 PM</option>
+        </select>
+
+        <button class="primary-btn" type="submit">
+          Save Patient
+        </button>
+
+        <p class="message" id="message"></p>
+      </form>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>© 2026 CarePoint Hospital Management System</p>
+  <p>Student Project Demo</p>
+</footer>
+
+<script>
+const patients = [
+  {
+    id: "CP1001",
+    name: "Aarav Patil",
+    age: 32,
+    department: "Cardiology",
+    phone: "98XXXXXX21",
+    doctor: "Dr. Ananya Mehta",
+    date: "2026-10-09",
+    time: "09:00 AM"
+  },
+  {
+    id: "CP1002",
+    name: "Priya Sharma",
+    age: 27,
+    department: "Dermatology",
+    phone: "98XXXXXX35",
+    doctor: "Dr. Sara Khan",
+    date: "2026-10-09",
+    time: "10:30 AM"
+  },
+  {
+    id: "CP1003",
+    name: "Kabir Deshmukh",
+    age: 45,
+    department: "General Medicine",
+    phone: "98XXXXXX47",
+    doctor: "Dr. Rohan Kulkarni",
+    date: "2026-10-09",
+    time: "12:00 PM"
+  }
+];
+
+function showPage(page) {
+  document.querySelectorAll(".view").forEach(section => {
+    section.classList.remove("active");
+  });
+
+  document.getElementById(page).classList.add("active");
+}
+
+function renderPatients() {
+  const query = document.getElementById("search").value.toLowerCase();
+
+  const filtered = patients.filter(patient =>
+    patient.name.toLowerCase().includes(query) ||
+    patient.id.toLowerCase().includes(query)
+  );
+
+  document.getElementById("patientTable").innerHTML =
+    filtered.map(patient => `
+      <tr>
+        <td>${patient.id}</td>
+        <td>${patient.name}</td>
+        <td>${patient.age}</td>
+        <td>${patient.department}</td>
+        <td>${patient.phone || "-"}</td>
+      </tr>
+    `).join("");
+}
+
+function renderAppointments() {
+  document.getElementById("appointmentTable").innerHTML =
+    patients.map(patient => `
+      <tr>
+        <td>${patient.name}</td>
+        <td>${patient.doctor}</td>
+        <td>${patient.date}</td>
+        <td>${patient.time}</td>
+      </tr>
+    `).join("");
+}
+
+function renderDashboard() {
+  document.getElementById("totalPatients").textContent = patients.length;
+  document.getElementById("totalAppointments").textContent = patients.length;
+
+  document.getElementById("recentPatients").innerHTML =
+    patients.slice(-5).reverse().map(patient => `
+      <tr>
+        <td>${patient.id}</td>
+        <td>${patient.name}</td>
+        <td>${patient.age}</td>
+        <td>${patient.department}</td>
+      </tr>
+    `).join("");
+}
+
+document.getElementById("patientForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const patient = {
+    id: "CP" + (1001 + patients.length),
+    name: document.getElementById("name").value.trim(),
+    age: document.getElementById("age").value,
+    phone: document.getElementById("phone").value.trim(),
+    department: document.getElementById("department").value,
+    doctor: document.getElementById("doctor").value,
+    date: document.getElementById("date").value,
+    time: document.getElementById("time").value
+  };
+
+  patients.push(patient);
+
+  renderPatients();
+  renderAppointments();
+  renderDashboard();
+
+  this.reset();
+  document.getElementById("message").textContent =
+    "Patient added successfully!";
+
+  setTimeout(() => {
+    document.getElementById("message").textContent = "";
+  }, 3000);
+});
+
+renderPatients();
+renderAppointments();
+renderDashboard();
+</script>
+
+</body>
+</html>
